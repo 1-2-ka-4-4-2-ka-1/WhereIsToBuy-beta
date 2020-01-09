@@ -2,14 +2,19 @@ package com.findViewById.tiwari.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     FloatingActionButton mAddNewItem;
 
     private AutoCompleteTextView shopSearchView;
+
 
 
     @Override
@@ -53,6 +59,26 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         doSetupShopSearchAdapter();
 
+        setFocusChangedListener();
+
+    }
+
+
+    public void setFocusChangedListener(){
+
+        shopSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus){
+                    if(mAddNewShop.getVisibility() == View.VISIBLE)
+                    {
+                        mAddNewShop.setVisibility(View.GONE);
+                    }
+
+                }
+            }
+        });
+
     }
 
     public void  doSetupShopSearchAdapter(){
@@ -80,7 +106,19 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
 
     @Override
-    public void filteringFinished(int filteredItemsCount) {
+    public void filteringFinished(int filteredShopsCount) {
 
+        if(filteredShopsCount == 0) {
+            Log.i("LOG_TAG", " filteringFinished  count = " + filteredShopsCount);
+            Toast toast = Toast.makeText(this, filteredShopsCount + " Items matched your search", Toast.LENGTH_SHORT);
+            View v = toast.getView();
+            v.getBackground().setColorFilter(Color.rgb(10, 190, 207), PorterDuff.Mode.SRC_IN);
+            toast.show();
+
+            mAddNewShop.setVisibility(View.VISIBLE);
+        }
+        else {
+            mAddNewShop.setVisibility(View.GONE);
+        }
     }
 }
