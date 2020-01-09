@@ -78,14 +78,15 @@ public class SplashScreenActivity extends AppCompatActivity {
         protected void onPostExecute(Integer result) {
             if (result == 0)
             {
-                Intent intent = new Intent(SplashScreenActivity.this,LoginActivity.class);
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashScreenActivity.this,splash_logo,"logoTransition");
-                startActivity(intent,options.toBundle());
+                Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashScreenActivity.this, splash_logo,"logoTransition");
+                startActivity(intent, options.toBundle());
                // SplashScreenActivity.this.finish();
             }
             else {
                 Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-                startActivity(intent);
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashScreenActivity.this, splash_logo,"logoTransition");
+                startActivity(intent, options.toBundle());
             }
         }
     }

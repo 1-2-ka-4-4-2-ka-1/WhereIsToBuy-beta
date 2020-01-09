@@ -7,12 +7,122 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_date"
+        android:layout_width="91dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="322dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="2dp"
+        android:gravity="center|end"
+        android:text="02/01/20"
+        android:textColor="#0288D1"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/bill_unit_container_recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView3" />
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardView3"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_shop_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_store_blue"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="17dp" />
+
+        <AutoCompleteTextView
+            android:id="@+id/sv_shop_search"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/blue_edittext_layout"
+            android:completionThreshold="1"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Shop name...."
+            android:inputType="textPersonName"
+            android:textSize="14sp"
+            tools:layout_editor_absoluteX="50dp"
+            tools:layout_editor_absoluteY="17dp" />
+
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#00F5F1F1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fb_add_new_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_add_white"
+            app:backgroundTint="@color/colorPrimaryDark"
+            tools:layout_editor_absoluteX="16dp"></android.support.design.widget.FloatingActionButton>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fb_save_bill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:backgroundTint="@color/green"
+            app:rippleColor="#00194499"
+            app:srcCompat="@drawable/ic_check_white"
+            tools:layout_editor_absoluteX="349dp"
+            tools:layout_editor_absoluteY="1dp" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/bill_unit_container_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="542dp"
+        android:layout_marginBottom="2dp"
+        android:clickable="true"
+        android:descendantFocusability="afterDescendants"
+        android:focusable="auto"
+        android:focusableInTouchMode="true"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/id_btn_add_shop"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginEnd="148dp"
+        android:background="@drawable/button_layout"
+        android:text="Add New"
+        android:textColor="@android:color/background_light"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/bill_unit_container_recyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sv_shop_search" />
+
+</android.support.constraint.ConstraintLayout>>
