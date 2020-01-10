@@ -1,11 +1,15 @@
 package com.findViewById.tiwari.myapplication;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -45,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     DatabaseReference usersRef;
     //DatabaseReference shopItemsRef;
 
+    private int STORAGE_PERMISSION_CODE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +58,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+        if (ContextCompat.checkSelfPermission(LoginActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "Permition Granted Already", Toast.LENGTH_SHORT).show();
+        } else {
+            requestStoragePermition();
+        }
+
+
         databaseFirebase = FirebaseDatabase.getInstance();
         usersRef = databaseFirebase.getReference("users");
-
-
 
         sharedPreferences = getSharedPreferences(SAVED_PASS, MODE_PRIVATE);
 
@@ -95,6 +106,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void doSignIn(final String loginId, final String password) {
+
 
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -158,6 +170,55 @@ public class LoginActivity extends AppCompatActivity {
 
         mForgotPasswordDialogue.show();
     }
+
+    // Request permission
+    private void requestStoragePermition() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission needed")
+                    .setMessage("This permition is needed to proceed...")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            LoginActivity.this.finish();
+                            System.exit(0);
+                        }
+                    }).create().show();
+
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_PERMISSION_CODE);
+        }
+    }
+
+
+    //Check permission granted
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == STORAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT);
+
+                Intent i = new Intent(this, MainActivity.class);
+                LoginActivity.this.finish();
+                startActivity(i);
+
+            } else {
+                LoginActivity.this.finish();
+            }
+        }
+
+    }
+
 
 
 }

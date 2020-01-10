@@ -3,7 +3,6 @@ package com.findViewById.tiwari.myapplication;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import java.util.List;

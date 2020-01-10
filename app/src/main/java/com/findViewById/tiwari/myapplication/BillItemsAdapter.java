@@ -31,7 +31,7 @@ public class BillItemsAdapter extends ListAdapter<BillItem,BillItemsAdapter.Bill
             return BillItem.getMitem_desc().equals(t1.getMitem_desc())
                      &&  BillItem.getBill_id()==t1.getBill_id()
                     &&  BillItem.getMitem_rate()==t1.getMitem_rate()
-                    &&  BillItem.getMitem_unit()==t1.getMitem_unit();
+                    &&  BillItem.getMitem_unit() .equals(t1.getMitem_unit());
         }
     };
 
@@ -54,9 +54,10 @@ public class BillItemsAdapter extends ListAdapter<BillItem,BillItemsAdapter.Bill
 
         BillItem current_BillItem = getItem(i);
         BillItemHolder.mitem_desc.setText(current_BillItem.getMitem_desc());
-        BillItemHolder.mitem_id_label.setText(String.valueOf(current_BillItem.getBill_id()));
+        BillItemHolder.mitem_id_label.setText(String.valueOf(current_BillItem.getMitem_id_label()));
         BillItemHolder.mitem_amount.setText(Double.toString(current_BillItem.getMitem_amount()));
         BillItemHolder.mitem_rate.setText(Double.toString(current_BillItem.getMitem_rate()));
+        BillItemHolder.mitem_qty.setText(Double.toString(current_BillItem.getMitem_qty()));
         BillItemHolder.mitem_unit.setText(current_BillItem.getMitem_unit());
 
     }

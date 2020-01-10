@@ -19,20 +19,18 @@ public class BillItem {
     private double mitem_amount;
 
 
-    public BillItem(String id, String desc, String unit, double rate, double qty, double amount) {
+    public BillItem(String mitem_id_label, String mitem_desc, String mitem_unit, double mitem_rate, double mitem_qty, double mitem_amount) {
 
-        mitem_id_label = id;
-        mitem_desc = desc;
-        mitem_unit = unit;
-        mitem_rate = rate;
-        mitem_qty = qty;
-        mitem_amount = amount;
-
-    }
-
-    public void setMitem_qty(double mitem_qty) {
+        this.mitem_id_label = mitem_id_label;
+        this.mitem_desc = mitem_desc;
+        this.mitem_unit = mitem_unit;
+        this.mitem_rate = mitem_rate;
         this.mitem_qty = mitem_qty;
+        this.mitem_amount = mitem_amount;
+
     }
+
+
 
     public int getBill_id() {
         return bill_id;
@@ -42,8 +40,8 @@ public class BillItem {
         return mitem_id_label;
     }
 
-    public void setBill_id(int bill_id) {
-        this.bill_id = bill_id;
+    public void setMitem_id_label(String mitem_id_label) {
+        this.mitem_id_label = mitem_id_label;
     }
 
     public String getMitem_desc() {
@@ -66,26 +64,10 @@ public class BillItem {
         return mitem_amount;
     }
 
-    public void setMitem_desc(String mitem_desc) {
-        this.mitem_desc = mitem_desc;
+
+
+
+    public void setBill_id(int bill_id) {
+        this.bill_id = bill_id;
     }
-
-
-    public void setMitem_id_label(String mitem_id_label) {
-        this.mitem_id_label = mitem_id_label;
-    }
-
-    public void setMitem_rate(double mitem_rate) {
-        this.mitem_rate = mitem_rate;
-    }
-
-    public void setMitem_amount(double mitem_amount) {
-        this.mitem_amount = mitem_amount;
-    }
-
-    public void setMitem_unit(String mitem_unit) {
-        this.mitem_unit = mitem_unit;
-    }
-
-
 }

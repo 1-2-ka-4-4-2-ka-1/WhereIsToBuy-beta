@@ -15,6 +15,7 @@ import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -84,7 +85,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                // SplashScreenActivity.this.finish();
             }
             else {
-                Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this, DashBoardActivity.class);
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashScreenActivity.this, splash_logo,"logoTransition");
                 startActivity(intent, options.toBundle());
             }
@@ -121,10 +122,11 @@ public class SplashScreenActivity extends AppCompatActivity {
                 public void onAnimationEnd(Drawable drawable) {
                     avd2.stop();
                     new MyAsyncTask().execute();
+                    Log.i("msg","1");
                 }
             });
         }
-        if (d instanceof AnimatedVectorDrawable) {
+        else if (d instanceof AnimatedVectorDrawable) {
             avd1 = (AnimatedVectorDrawable) d;
             avd1.start();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -133,6 +135,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                     public void onAnimationEnd(Drawable drawable) {
                         avd1.stop();
                         new MyAsyncTask().execute();
+                        Log.i("msg","2");
                     }
                 });
             }
