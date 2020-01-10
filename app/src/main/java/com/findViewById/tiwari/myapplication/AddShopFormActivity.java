@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RatingBar;
+import android.widget.Toast;
 
 public class AddShopFormActivity extends AppCompatActivity {
 
@@ -74,6 +75,8 @@ public class AddShopFormActivity extends AppCompatActivity {
 
         ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
         storage.addNewShop(s);
+
+        Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_LONG).show();
 
     }
 

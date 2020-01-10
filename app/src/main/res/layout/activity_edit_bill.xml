@@ -70,9 +70,9 @@
 
                     <EditText
                         android:id="@+id/ed_description"
-                        android:layout_width="285dp"
+                        android:layout_width="260dp"
                         android:layout_height="match_parent"
-                        android:layout_margin="4dp"
+                        android:layout_marginRight="20dp"
                         android:layout_weight="1"
                         android:background="@drawable/grey_edittext_layout"
                         android:ems="10"
@@ -197,7 +197,7 @@
                 android:ems="10"
                 android:gravity="center|center_horizontal"
                 android:inputType="textPersonName"
-                android:text="1216.60" />
+                android:text="448" />
         </LinearLayout>
 
     </LinearLayout>

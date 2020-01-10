@@ -31,7 +31,8 @@ public class BillItemsAdapter extends ListAdapter<BillItem,BillItemsAdapter.Bill
             return BillItem.getMitem_desc().equals(t1.getMitem_desc())
                      &&  BillItem.getBill_id()==t1.getBill_id()
                     &&  BillItem.getMitem_rate()==t1.getMitem_rate()
-                    &&  BillItem.getMitem_unit() .equals(t1.getMitem_unit());
+                    &&  BillItem.getMitem_unit().equals(t1.getMitem_unit())
+                    && BillItem.getMitem_qty() == t1.getMitem_qty();
         }
     };
 
@@ -61,18 +62,7 @@ public class BillItemsAdapter extends ListAdapter<BillItem,BillItemsAdapter.Bill
         BillItemHolder.mitem_unit.setText(current_BillItem.getMitem_unit());
 
     }
-//
-//    @Override
-//    public int getItemCount() {
-//        return BillItems.size();
-//    }
 
-
-//    public void setBillItems(List<BillItem> BillItems) {
-//        this.BillItems = BillItems;
-//        notifyDataSetChanged();
-//    }
-//
 
     public BillItem getBillItemAt(int position) {
         return getItem(position);

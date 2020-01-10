@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ShopsStorageClass {
 
-    private final String STORAGE = " com.telitel.tiwari.mflix.STORAGE";
+    private final String STORAGE = " com.findViewById.tiwari.myapplication.STORAGE";
     private SharedPreferences preferences;
     private Context context ;
 
@@ -35,7 +35,13 @@ public class ShopsStorageClass {
 
         ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
         List<ShopDetailsModel> list =  storage.loadShops();
+        if(list!=null)
         list.add(detailsModel);
+
+        else {
+            list = new ArrayList<>();
+            list.add(detailsModel);
+        }
         storage.shopDetails(list);
 
     }

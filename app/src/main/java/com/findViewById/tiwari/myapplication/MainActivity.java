@@ -1,14 +1,17 @@
 package com.findViewById.tiwari.myapplication;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,14 +21,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class MainActivity extends AppCompatActivity implements FilterListenerInterface{
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+public class MainActivity extends AppCompatActivity implements FilterListenerInterface ,  DatePickerDialog.OnDateSetListener{
 
     public static Activity activity_main;
 
@@ -40,6 +52,12 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     private BillViewModel mBillItemMidel;
 
     public static final int EDIT_NOTE_REQUEST = 2;
+
+
+
+    FirebaseDatabase database;
+    DatabaseReference shopItemsRef;
+    public ArrayList<ShopItemModel> shop_itemArrayList;
 
 
     @Override
@@ -57,6 +75,35 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         mAddNewItem = findViewById(R.id.fb_add_new_item);
 
 
+        mDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickDate();
+            }
+        });
+
+
+        mAddNewItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ShopItemsStorageClass storage = new ShopItemsStorageClass(getApplicationContext());
+                ArrayList<ShopItemModel> shop_items =storage.loadItems();
+
+                if(shop_items!= null) {
+                   if(shop_items.size() != 0) {
+                       shoItemsDialogue();
+                   }
+                }else{
+                   Toast.makeText(MainActivity.this, " No Items Available  ", Toast.LENGTH_SHORT).show();
+                     LodeItemsDataAsyncTask lodeItemsDataAsyncTask=new LodeItemsDataAsyncTask();
+                     lodeItemsDataAsyncTask.execute();
+                }
+
+            }
+        });
+
+
         mAddNewShop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,9 +113,8 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         shopSearchView=findViewById(R.id.sv_shop_search);
 
-        //doSetupShopSearchAdapter();
+        doSetupShopSearchAdapter();
         setFocusChangedListener();
-
 
         RecyclerView recyclerView = findViewById(R.id.bill_unit_container_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -116,9 +162,17 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
                 startActivityForResult(intent,EDIT_NOTE_REQUEST);
 
-
             }
         });
+
+    }
+
+
+    public void shoItemsDialogue(){
+        //arrayList
+
+        ShowItemsDialogue items_dialog = new ShowItemsDialogue();
+        items_dialog.show(getSupportFragmentManager(),"show items");
 
     }
 
@@ -181,8 +235,11 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
         List<ShopDetailsModel> list =  storage.loadShops();
 
+
+
         ArrayList<String> shopsNamesList =new ArrayList<>();
 
+        if( list!=null )
         for(int i=0;i<list.size();i++)
         {
             shopsNamesList.add(list.get(i).getmShopName());
@@ -215,4 +272,97 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             mAddNewShop.setVisibility(View.GONE);
         }
     }
+
+
+    private void pickDate() {
+        DialogFragment date_picker = new DatePickerFragment();
+        date_picker.show(getSupportFragmentManager(),"date picker");
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        Calendar c =Calendar.getInstance();
+        c.set(Calendar.YEAR,year);
+        c.set(Calendar.MONTH,month);
+        c.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy ");
+        String currentDate = dateFormat.format(c.getTime());
+        mDate.setText(currentDate);
+    }
+
+
+    public class  LodeItemsDataAsyncTask extends AsyncTask<Void , Void , Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            doLoadShopItemsData();
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+
+            Toast.makeText(MainActivity.this,"Done"+values+"%",Toast.LENGTH_SHORT);
+
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(MainActivity.this,"Done",Toast.LENGTH_LONG);
+            shoItemsDialogue();
+        }
+    }
+
+
+
+   public void doLoadShopItemsData(){
+
+       database = FirebaseDatabase.getInstance();
+       shopItemsRef= database.getReference("Shop-items");
+
+        shopItemsRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                int itemCount = (int)dataSnapshot.getChildrenCount();
+                itemCount--;
+
+                String itemDesc="";
+                String itemRate="";
+                String itemUnit="";
+
+                    shop_itemArrayList = new ArrayList<>();
+                    while (itemCount-- != 0)
+                    {
+                        itemDesc=  dataSnapshot.child(Integer.toString(itemCount)).child("item").getValue().toString();
+                        itemRate= dataSnapshot.child(Integer.toString(itemCount)).child("rate").getValue().toString();
+                        itemUnit=  dataSnapshot.child(Integer.toString(itemCount)).child("unit").getValue().toString();
+
+                        shop_itemArrayList.add(new ShopItemModel(Integer.toString(0),itemDesc,itemUnit,Double.parseDouble(itemRate),1,Double.parseDouble(itemRate)));
+                        Log.i("Data:...........",dataSnapshot.child(Integer.toString(itemCount)).getValue().getClass().getName());
+
+                    }
+
+                    ShopItemsStorageClass storage = new ShopItemsStorageClass(getApplicationContext());
+                    storage.storeItems(shop_itemArrayList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+               Toast.makeText(MainActivity.this,"Failed",Toast.LENGTH_LONG);
+            }
+
+        });
+
+
+
+    }
+
+
+
 }

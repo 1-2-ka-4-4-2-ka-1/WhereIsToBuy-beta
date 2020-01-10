@@ -1,6 +1,8 @@
 package com.findViewById.tiwari.myapplication;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,10 +60,10 @@ public class EditBillActivity extends AppCompatActivity {
             setTitle("Edit Note");
 
             mitem_id_label.setText(intent.getStringExtra(EXTRA_ID));
-            mitem_rate.setText(intent.getStringExtra(EXTRA_RATE));
+            mitem_rate.setText(Double.toString(intent.getDoubleExtra(EXTRA_RATE,0)));
             mitem_desc.setText(intent.getStringExtra(EXTRA_DESC));
-            mitem_amount.setText(intent.getStringExtra(EXTRA_AMOUNT));
-            mitem_qty.setText(intent.getStringExtra(EXTRA_QTY));
+            mitem_amount.setText(Double.toString(intent.getDoubleExtra(EXTRA_AMOUNT,0)));
+            mitem_qty.setText(Double.toString(intent.getDoubleExtra(EXTRA_QTY,0)));
             mitem_unit.setText(intent.getStringExtra(EXTRA_UNIT));
 
 
@@ -74,20 +76,38 @@ public class EditBillActivity extends AppCompatActivity {
 
     public void doSaveBill() {
 
+
+
          //String item_id_label = mitem_id_label.getText().toString();
          String item_desc =  mitem_desc.getText().toString();
          String item_unit = mitem_unit.getText().toString();;
+
+
+         if(mitem_qty.getText().toString().trim().equals("") || mitem_rate.getText().toString().trim().equals("") ){
+
+             Toast toast = Toast.makeText(EditBillActivity.this, "Cannot be Empty", Toast.LENGTH_LONG);
+             View v = toast.getView();
+             v.getBackground().setColorFilter(Color.rgb(10, 190, 207), PorterDuff.Mode.SRC_IN);
+             toast.show();
+             return;
+         }
+
+
          double item_rate = Double.parseDouble(mitem_rate.getText().toString());
          double item_qty = Double.parseDouble(mitem_qty.getText().toString());
          double item_amount = Double.parseDouble(mitem_amount.getText().toString());
 
         try {
+
             if (item_desc.trim().isEmpty() || item_rate == 0 || item_qty == 0) {
-                Toast.makeText(this, "CanNot Be Empty", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(EditBillActivity.this, "Cannot be 0", Toast.LENGTH_LONG);
+                View v = toast.getView();
+                v.getBackground().setColorFilter(Color.rgb(10, 190, 207), PorterDuff.Mode.SRC_IN);
+                toast.show();
                 return;
             }
         }catch (Exception e){
-            Toast.makeText(EditBillActivity.this,"Make sure fields are correct",Toast.LENGTH_SHORT);
+            Toast.makeText(EditBillActivity.this,"Make sure fields are Filled",Toast.LENGTH_SHORT).show();
         }
 
         Intent data = new Intent();
