@@ -93,7 +93,7 @@ public class CheckSendBillsRecyclerViewAdapter extends RecyclerView.Adapter<Chec
         itemContainerRecyclerViewHolder.mitem_id_label.setText(Long.toString(current_bill_item.getmShopId()));
         itemContainerRecyclerViewHolder.mitem_name.setText(current_bill_item.getmName());
         itemContainerRecyclerViewHolder.mitem_date.setText(current_bill_item.getmDate());
-        //itemContainerRecyclerViewHolder.mitem_count.setText(current_bill_item.getmCount());
+        itemContainerRecyclerViewHolder.mitem_count.setText(Integer.toString(current_bill_item.getmCount()));
 
 
         final MapppedShopsBillsModel current_item  = mMappedBillsList.get(i);
