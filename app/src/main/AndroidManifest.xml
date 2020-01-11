@@ -15,7 +15,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".EditBillActivity"
             android:windowSoftInputMode="adjustPan"></activity>
-        <activity android:name=".AddShopFormActivity" />
+        <activity android:name=".AddShopFormActivity"
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".CheckSendBills" />
         <activity android:name=".DashBoardActivity" />
         <activity android:name=".LoginActivity"

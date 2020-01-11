@@ -55,11 +55,8 @@ public  abstract class BillItemDatabase extends RoomDatabase {
         protected Void doInBackground(Void... voids) {
 
 
-            BillDao.insert(new BillItem("4","Descrip 561","Kg" ,16,7,7887));
-            BillDao.insert(new BillItem("4","De4461","Kg" ,16,7,7887));
-            BillDao.insert(new BillItem("4","Descr656656561","Kg" ,16,7,7887));
-            BillDao.insert(new BillItem("4","Des989861","Kg" ,16,7,7887));
-            BillDao.insert(new BillItem("4","Des56551","Kg" ,16,7,7887));
+
+            //BillDao.insert(new BillItem("4","Des56551","Kg" ,16,7,7887));
 
             return null;
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -12,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -52,6 +55,14 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     private BillViewModel mBillItemMidel;
 
     public static final int EDIT_NOTE_REQUEST = 2;
+    public static final int ADD_SHOP_REQUEST = 1;
+
+
+
+    public static long timeInMills;
+
+    public static long shopId;
+
 
 
 
@@ -60,12 +71,14 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     public ArrayList<ShopItemModel> shop_itemArrayList;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         activity_main = this;
+
 
 
         mShopSearchView = findViewById(R.id.sv_shop_search);
@@ -87,6 +100,9 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             @Override
             public void onClick(View v) {
 
+
+                mShopSearchView.clearFocus();
+
                 ShopItemsStorageClass storage = new ShopItemsStorageClass(getApplicationContext());
                 ArrayList<ShopItemModel> shop_items =storage.loadItems();
 
@@ -100,6 +116,14 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                      lodeItemsDataAsyncTask.execute();
                 }
 
+            }
+        });
+
+
+        mSaveBill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doConfirmSaveBill();
             }
         });
 
@@ -167,6 +191,73 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
     }
 
+    public void doConfirmSaveBill(){
+
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Confirm Save")
+                .setMessage("Confirm save and clear list ?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        doSaveBill();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+
+    }
+
+    public void doSaveBill(){
+
+        timeInMills = System.currentTimeMillis()%1000;
+
+        if(shopId == 0) {
+            Toast.makeText(MainActivity.this,"Shop details Wrong",Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        ArrayList<BillItem> billItems = new ArrayList<>();
+
+        if(mBillItemMidel.getAllBills().getValue() != null){
+            if(mBillItemMidel.getAllBills().getValue().size() == 0)
+            {
+                Toast.makeText(MainActivity.this,"Can Not Save Emty Bill",Toast.LENGTH_LONG).show();
+                return;
+            }
+
+        }
+
+        try {
+
+
+            billItems.addAll(mBillItemMidel.getAllBills().getValue());
+
+            for (int i = 0; i < billItems.size(); i++) {
+
+                billItems.get(i).setBill_id(Integer.parseInt(Long.toString(timeInMills)));
+            }
+
+
+            MapppedShopsBillsModel mapppedShopsBillsModels = new MapppedShopsBillsModel(shopId, billItems.get(0).getBill_id(), mDate.getText().toString(),billItems.size(),mShopSearchView.getText().toString());
+
+            MappedShopsBillsStorageClass storage = new MappedShopsBillsStorageClass(MainActivity.activity_main);
+            storage.insertMappedItems(mapppedShopsBillsModels);
+            Toast.makeText(MainActivity.this,"Bill Saved",Toast.LENGTH_LONG).show();
+
+            //shopId billId date
+        }catch (Exception e){
+
+            Toast toast = Toast.makeText(this, "Something Went Wrong"+e, Toast.LENGTH_SHORT);
+            View v = toast.getView();
+            v.getBackground().setColorFilter(Color.RED, PorterDuff.Mode.SRC_IN);
+            toast.show();
+
+        }
+
+    }
 
     public void shoItemsDialogue(){
         //arrayList
@@ -204,6 +295,14 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
             Toast.makeText(getApplicationContext(),"Updated",Toast.LENGTH_LONG).show();
 
+        }else if(requestCode == ADD_SHOP_REQUEST && resultCode == RESULT_OK){
+
+            Toast.makeText(getApplicationContext(),data.getStringExtra(AddShopFormActivity.EXTRA_SHOPNAME),Toast.LENGTH_LONG).show();
+            mShopSearchView.setText(data.getStringExtra(AddShopFormActivity.EXTRA_SHOPNAME));
+            shopId = Long.parseLong(data.getStringExtra(AddShopFormActivity.EXTRA_ID));
+
+            mShopSearchView.clearFocus();
+
         }
         else
         {
@@ -217,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         shopSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus){
+                if(hasFocus){
                     if(mAddNewShop.getVisibility() == View.VISIBLE)
                     {
                         mAddNewShop.setVisibility(View.GONE);
@@ -232,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     public void  doSetupShopSearchAdapter(){
 
 
-        ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
+        final ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
         List<ShopDetailsModel> list =  storage.loadShops();
 
 
@@ -248,11 +347,21 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         final AutoCompleteAdapter adapter = new AutoCompleteAdapter(this, R.layout.text_suggestionss_layout ,shopsNamesList);
         adapter.setFilterListeners(this);
         shopSearchView.setAdapter(adapter);
+        shopSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                shopId = Long.parseLong(storage.getShopByDesc(shopSearchView.getText().toString().trim()).getmContactno())%1000;
+
+
+            }
+        });
+
     }
 
     public void doAddNewShop(){
         Intent intent = new Intent(MainActivity.this, AddShopFormActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,ADD_SHOP_REQUEST);
     }
 
 
@@ -294,6 +403,14 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     public class  LodeItemsDataAsyncTask extends AsyncTask<Void , Void , Void>{
 
         @Override
+        protected void onPreExecute() {
+
+            Toast.makeText(MainActivity.this,"Executing",Toast.LENGTH_SHORT);
+
+            super.onPreExecute();
+        }
+
+        @Override
         protected Void doInBackground(Void... voids) {
 
             doLoadShopItemsData();
@@ -303,17 +420,19 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
+
 
             Toast.makeText(MainActivity.this,"Done"+values+"%",Toast.LENGTH_SHORT);
+            super.onProgressUpdate(values);
 
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+
             Toast.makeText(MainActivity.this,"Done",Toast.LENGTH_LONG);
-            shoItemsDialogue();
+            //shoItemsDialogue();
+            super.onPostExecute(aVoid);
         }
     }
 
@@ -343,7 +462,9 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                         itemRate= dataSnapshot.child(Integer.toString(itemCount)).child("rate").getValue().toString();
                         itemUnit=  dataSnapshot.child(Integer.toString(itemCount)).child("unit").getValue().toString();
 
-                        shop_itemArrayList.add(new ShopItemModel(Integer.toString(0),itemDesc,itemUnit,Double.parseDouble(itemRate),1,Double.parseDouble(itemRate)));
+                        timeInMills = System.currentTimeMillis()%1000;
+
+                        shop_itemArrayList.add(new ShopItemModel(Long.toString(timeInMills),itemDesc,itemUnit,Double.parseDouble(itemRate),1,Double.parseDouble(itemRate)));
                         Log.i("Data:...........",dataSnapshot.child(Integer.toString(itemCount)).getValue().getClass().getName());
 
                     }
@@ -362,7 +483,6 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
 
     }
-
 
 
 }

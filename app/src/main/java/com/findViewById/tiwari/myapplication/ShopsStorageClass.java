@@ -56,6 +56,35 @@ public class ShopsStorageClass {
     }
 
 
+    public ShopDetailsModel getShopByDesc(String desc){
+
+        ArrayList<ShopDetailsModel> s = new ArrayList<>();
+        s.addAll(loadShops());
+
+
+        if(s.size()==0)
+        {
+            return null;
+        }
+
+
+        for(int i=0;i<s.size();i++){
+
+            if(s.get(i).getmShopName().equals(desc)){
+                ShopDetailsModel shopDetailsModel = s.get(i);
+                return shopDetailsModel;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    public void loadShopById(){
+
+    }
+
 
 //    public void clearCachedShops() {
 //        preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);

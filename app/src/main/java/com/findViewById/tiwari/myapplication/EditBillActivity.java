@@ -24,12 +24,12 @@ public class EditBillActivity extends AppCompatActivity {
     private FloatingActionButton msave_edit;
 
 
-    public static final String EXTRA_ID = "com.telitel.tiwari.architecturecomponents.EXTRA_ID";
-    public static final String EXTRA_RATE = "com.telitel.tiwari.architecturecomponents.EXTRA_RATE";
-    public static final String EXTRA_DESC = "com.telitel.tiwari.architecturecomponents.EXTRA_DESC";
-    public static final String EXTRA_AMOUNT = "com.telitel.tiwari.architecturecomponents.EXTRA_AMOUNT";
-    public static final String EXTRA_QTY = "com.telitel.tiwari.architecturecomponents.EXTRA_QTY";
-    public static final String EXTRA_UNIT = "com.telitel.tiwari.architecturecomponents.EXTRA_UNIT";
+    public static final String EXTRA_ID = "com.findViewById.tiwari.myapplication.EXTRA_ID";
+    public static final String EXTRA_RATE = "com.findViewById.tiwari.myapplication.EXTRA_RATE";
+    public static final String EXTRA_DESC = "com.findViewById.tiwari.myapplication.EXTRA_DESC";
+    public static final String EXTRA_AMOUNT = "com.findViewById.tiwari.myapplication.EXTRA_AMOUNT";
+    public static final String EXTRA_QTY = "com.findViewById.tiwari.myapplication.EXTRA_QTY";
+    public static final String EXTRA_UNIT = "com.findViewById.tiwari.myapplication.EXTRA_UNIT";
 
 
     @Override

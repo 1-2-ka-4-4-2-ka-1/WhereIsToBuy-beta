@@ -65,43 +65,12 @@ public class ShowItemsDialogue extends AppCompatDialogFragment {
                     shop_items.get(Position).setmIsSelected(true);
                     mShowItemsAdapter.notifyItemChanged(Position);
 
-//                    BillItem billItem = new BillItem(shop_items.get(Position).getMitem_id_label(), shop_items.get(Position).getMitem_desc(),
-//                            shop_items.get(Position).getMitem_unit(), shop_items.get(Position).getMitem_rate(), shop_items.get(Position).getMitem_qty(),
-//                            shop_items.get(Position).getMitem_amount());
-//
-//                    billViewModel.insert(billItem);
                 }else {
 
                     shop_items.get(Position).setmIsSelected(false);
                     mShowItemsAdapter.notifyItemChanged(Position);
                 }
 
-//                                  if(shop_items.get(Position).getmIsSelected())
-//                {
-//
-//                    for(int i=0;i<MainActivity.bill_item_container_list.size();i++)
-//                    {
-//                        if(MainActivity.bill_item_container_list.get(i).getMitem_desc().equals(shop_items.get(Position).getmItemDesc()))
-//                        {
-//                            MainActivity.bill_item_container_list.remove(i);
-//                            break;
-//                        }
-//                    }
-//
-//                                      shop_items.get(Position).setmIsSelected(false);
-//                                      mShowItemsAdapter.notifyDataSetChanged();
-//                    MainActivity.mItemContainerRecyclerViewAdapter.notifyDataSetChanged();
-//                }
-//                else {
-//                                      MainActivity.bill_item_container_list.add(new bill_item_container_item("Item1:",shop_items.get(Position).getmItemDesc(),
-//                                              shop_items.get(Position).getmItemUnit(),
-//                                              Double.parseDouble(shop_items.get(Position).getmItemRate()),
-//                                              1,Double.parseDouble(shop_items.get(Position).getmItemRate())));
-//                                      shop_items.get(Position).setmIsSelected(true);
-//                                      mShowItemsAdapter.notifyDataSetChanged();
-//                  MainActivity.mItemContainerRecyclerViewAdapter.notifyDataSetChanged();
-//
-//                }
             }
         });
 
@@ -144,9 +113,7 @@ public class ShowItemsDialogue extends AppCompatDialogFragment {
 
                                 billViewModel.insert(billItem);
                             }
-
                         }
-
 
                         isVisible=false;
                     }

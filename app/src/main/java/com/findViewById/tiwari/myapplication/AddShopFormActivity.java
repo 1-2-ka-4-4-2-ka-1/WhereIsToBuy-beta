@@ -1,5 +1,6 @@
 package com.findViewById.tiwari.myapplication;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,8 @@ public class AddShopFormActivity extends AppCompatActivity {
 
     private FloatingActionButton mSubmitButton;
 
-
+    public static final String EXTRA_SHOPNAME = "com.findViewById.tiwari.myapplication.EXTRA_SHOPNAME";
+    public static final String EXTRA_ID = "com.findViewById.tiwari.myapplication.EXTRA_ID";
 
 
     @Override
@@ -77,6 +79,15 @@ public class AddShopFormActivity extends AppCompatActivity {
         storage.addNewShop(s);
 
         Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_LONG).show();
+
+        Intent data = new Intent();
+
+        data.putExtra(EXTRA_SHOPNAME, ShopName);
+        data.putExtra(EXTRA_ID, Contactno);
+
+        setResult(RESULT_OK, data);
+        finish();
+
 
     }
 

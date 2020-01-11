@@ -83,11 +83,11 @@ public class ShowItemsRecyclelerViewAdapter extends RecyclerView.Adapter<ShowIte
 
                 if(!current_item.getmIsSelected())
                 {
-                    itemsViewHolder.mItemTextView.setTextColor(Color.BLACK);
+                    itemsViewHolder.mItemTextView.setTextColor(Color.DKGRAY);
                     //current_item.setmIsSelected(false);
                 }
                 else {
-                    itemsViewHolder.mItemTextView.setTextColor(Color.CYAN);
+                    itemsViewHolder.mItemTextView.setTextColor(Color.rgb(9,151,217));
                     //current_item.setmIsSelected(true);
                 }
     }

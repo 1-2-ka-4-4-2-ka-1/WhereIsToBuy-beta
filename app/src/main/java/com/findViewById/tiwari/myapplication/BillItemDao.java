@@ -28,4 +28,5 @@ public interface BillItemDao {
     @Query("SELECT * FROM bill_table ORDER BY bill_id DESC")
     LiveData<List<BillItem>> getAllBills();
 
+
 }

@@ -208,10 +208,6 @@ public class LoginActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT);
 
-                Intent i = new Intent(this, MainActivity.class);
-                LoginActivity.this.finish();
-                startActivity(i);
-
             } else {
                 LoginActivity.this.finish();
             }

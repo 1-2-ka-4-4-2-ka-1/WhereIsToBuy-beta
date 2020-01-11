@@ -4,8 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 
-@Entity(tableName = "bill_table")
-public class BillItem {
+
+
+@Entity(tableName = "all_bills_table")
+public class AllBillsTable {
 
 
     @PrimaryKey(autoGenerate = true)
@@ -19,7 +21,7 @@ public class BillItem {
     private double mitem_amount;
 
 
-    public BillItem(String mitem_id_label, String mitem_desc, String mitem_unit, double mitem_rate, double mitem_qty, double mitem_amount) {
+    public AllBillsTable(String mitem_id_label, String mitem_desc, String mitem_unit, double mitem_rate, double mitem_qty, double mitem_amount) {
 
         this.mitem_id_label = mitem_id_label;
         this.mitem_desc = mitem_desc;
@@ -65,11 +67,11 @@ public class BillItem {
     }
 
 
-
-
     public void setBill_id(int bill_id) {
         this.bill_id = bill_id;
     }
+
+
 }
 
 
