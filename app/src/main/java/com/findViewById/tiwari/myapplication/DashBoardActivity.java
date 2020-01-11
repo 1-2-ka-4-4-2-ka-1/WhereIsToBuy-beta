@@ -42,7 +42,7 @@ public class DashBoardActivity extends AppCompatActivity {
 
 
     public void doSendAllBills(){
-        Intent intent = new Intent(DashBoardActivity.this, CheckSendBills.class);
+        Intent intent = new Intent(DashBoardActivity.this, CheckSendBillsActivity.class);
         startActivity(intent);
     }
 

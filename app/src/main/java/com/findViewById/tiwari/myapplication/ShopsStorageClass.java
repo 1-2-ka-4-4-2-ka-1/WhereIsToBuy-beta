@@ -86,10 +86,10 @@ public class ShopsStorageClass {
     }
 
 
-//    public void clearCachedShops() {
-//        preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        editor.clear();
-//        editor.commit();
-//    }
+    public void clearCachedShops() {
+        preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.commit();
+    }
 }

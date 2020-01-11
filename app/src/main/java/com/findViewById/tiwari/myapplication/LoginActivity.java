@@ -114,7 +114,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(loginId).exists()) {
 
-
                     if (!loginId.trim().isEmpty()) {
 
                         String id = dataSnapshot.child(loginId).child("username").getValue().toString();

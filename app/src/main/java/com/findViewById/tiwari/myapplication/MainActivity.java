@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
     private BillViewModel mBillItemMidel;
 
+    private AllBillsViewModel mAllBillsViewModel;
+
     public static final int EDIT_NOTE_REQUEST = 2;
     public static final int ADD_SHOP_REQUEST = 1;
 
@@ -158,6 +160,9 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             }
         });
 
+
+        mAllBillsViewModel = ViewModelProviders.of(this).get(AllBillsViewModel.class);
+
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
@@ -237,15 +242,18 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
             for (int i = 0; i < billItems.size(); i++) {
 
-                billItems.get(i).setBill_id(Integer.parseInt(Long.toString(timeInMills)));
+                billItems.get(i).setMitem_id_label(Long.toString(timeInMills));
+                mAllBillsViewModel.insert( new AllBillsItem((billItems.get(i).getMitem_id_label()),billItems.get(i).getMitem_desc(),billItems.get(i).getMitem_unit(),billItems.get(i).getMitem_rate(),billItems.get(i).getMitem_qty(),billItems.get(i).getMitem_amount()));
             }
 
 
-            MapppedShopsBillsModel mapppedShopsBillsModels = new MapppedShopsBillsModel(shopId, billItems.get(0).getBill_id(), mDate.getText().toString(),billItems.size(),mShopSearchView.getText().toString());
+
+            MapppedShopsBillsModel mapppedShopsBillsModels = new MapppedShopsBillsModel(shopId,Integer.parseInt(Long.toString(timeInMills).trim()), mDate.getText().toString(),billItems.size(),mShopSearchView.getText().toString());
 
             MappedShopsBillsStorageClass storage = new MappedShopsBillsStorageClass(MainActivity.activity_main);
             storage.insertMappedItems(mapppedShopsBillsModels);
             Toast.makeText(MainActivity.this,"Bill Saved",Toast.LENGTH_LONG).show();
+            mBillItemMidel.deleteAllBills();
 
             //shopId billId date
         }catch (Exception e){
@@ -256,6 +264,13 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             toast.show();
 
         }
+
+    }
+
+
+     public  void addToAllBillsDatabase(){
+
+
 
     }
 
@@ -301,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             mShopSearchView.setText(data.getStringExtra(AddShopFormActivity.EXTRA_SHOPNAME));
             shopId = Long.parseLong(data.getStringExtra(AddShopFormActivity.EXTRA_ID));
 
-            mShopSearchView.clearFocus();
 
         }
         else

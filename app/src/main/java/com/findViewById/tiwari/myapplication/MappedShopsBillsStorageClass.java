@@ -60,7 +60,8 @@ public class MappedShopsBillsStorageClass {
     public void clearCachedItems() {
         preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
+        editor.putString("mappedBillItemsArrayList", "");
+        editor.apply();
         editor.commit();
     }
 }

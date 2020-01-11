@@ -22,7 +22,7 @@ public class AddShopFormActivity extends AppCompatActivity {
     private EditText mGroup;
 
     private RatingBar mRating;
-
+    private  int Rating;
     private FloatingActionButton mSubmitButton;
 
     public static final String EXTRA_SHOPNAME = "com.findViewById.tiwari.myapplication.EXTRA_SHOPNAME";
@@ -70,7 +70,14 @@ public class AddShopFormActivity extends AppCompatActivity {
          String Contactno = mContactno.getText().toString().trim() ;
          String Group =  mGroup.getText().toString().trim();;
 
-         int Rating = mRating.getNumStars();
+
+         mRating.setStepSize(1.0f);
+         mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+             @Override
+             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                 Rating = (int)(rating);
+             }
+         });
 
 
         ShopDetailsModel s = new ShopDetailsModel( ShopName ,  AliasName ,  Address ,  Area ,  Location ,  Sublocation ,  Landmark ,  Contactno , Group ,  Rating );
