@@ -181,7 +181,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
 //
 //        AllBillsViewModel mAllBillsViewModel;
 //        mAllBillsViewModel = ViewModelProviders.of(this).get(AllBillsViewModel.class);
-//
+
 
         sharedPreferences = getSharedPreferences("saved_password",Context.MODE_PRIVATE);
         String SalesmenId = sharedPreferences.getString("user_id","not Found");
@@ -221,11 +221,11 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         l.add(mappedData);
         l.add(userData);
 
-        new CheckSendBillsActivity.UploadData().execute(l);
+       new CheckSendBillsActivity.UploadData().execute(l);
 
 
 
-        final DatabaseReference billsRef = databaseFirebase.getReference("data/salesmen_"+l.get(3)+"/bills");
+        final DatabaseReference billsRef = databaseFirebase.getReference("data/salesmen_"+l.get(3)+"/bills/123");
 
         mAllBillsViewModel.getAllBills().observe(this, new Observer<List<AllBillsItem>>() {
             @Override
@@ -243,7 +243,9 @@ public class CheckSendBillsActivity extends AppCompatActivity {
             }
         });
 
-        mAllBillsViewModel.deleteAllBills();
+
+        checkSendBillsRecyclerViewAdapter.notifyDataSetChanged();
+       // mAllBillsViewModel.deleteAllBills();
 
         deleteMappedItems();
 
