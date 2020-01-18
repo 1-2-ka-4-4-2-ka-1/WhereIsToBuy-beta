@@ -33,6 +33,7 @@ public class AllBillsItemsAdapter extends ListAdapter<AllBillsItem,AllBillsItems
                     &&  AllBillsItem.getMitem_rate()==t1.getMitem_rate()
                     &&  AllBillsItem.getMitem_unit().equals(t1.getMitem_unit())
                     && AllBillsItem.getMitem_qty() == t1.getMitem_qty();
+
         }
     };
 

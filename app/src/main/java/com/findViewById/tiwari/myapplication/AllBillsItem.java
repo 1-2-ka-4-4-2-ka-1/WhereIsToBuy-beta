@@ -19,9 +19,13 @@ public class AllBillsItem {
     private double mitem_rate;
     private double mitem_qty;
     private double mitem_amount;
+    public Long mShopId;
+    public String mDate;
+    public int mCount;
 
 
-    public AllBillsItem(String mitem_id_label, String mitem_desc, String mitem_unit, double mitem_rate, double mitem_qty, double mitem_amount) {
+
+    public AllBillsItem(String mitem_id_label, String mitem_desc, String mitem_unit, double mitem_rate, double mitem_qty, double mitem_amount , Long mShopId, String mDate , int mCount) {
 
         this.mitem_id_label = mitem_id_label;
         this.mitem_desc = mitem_desc;
@@ -29,6 +33,9 @@ public class AllBillsItem {
         this.mitem_rate = mitem_rate;
         this.mitem_qty = mitem_qty;
         this.mitem_amount = mitem_amount;
+        this.mShopId = mShopId;
+        this.mDate = mDate;
+        this.mCount = mCount;
 
     }
 

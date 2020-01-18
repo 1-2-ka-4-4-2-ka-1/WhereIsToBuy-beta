@@ -8,8 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
-import android.support.annotation.NonNull;
+
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -17,28 +16,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +56,9 @@ public class CheckSendBillsActivity extends AppCompatActivity {
     private  Map<String,ShopDetailsModel> shopsData = new HashMap<>();
     private  Map<String,AllBillsItem> billsData = new HashMap<>();
     private  Map<String,MapppedShopsBillsModel> mappedData = new HashMap<>();
-    private  Map<String,String> userData = new HashMap<>();
+    private  Map<String,String> salesmenId = new HashMap<>();
+
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +77,9 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         mSendData = findViewById(R.id.fb_check_send_data);
 
         getMappedItemsList();
+
+
+        sharedPreferences = getSharedPreferences("saved_password",MODE_PRIVATE);
 
 
         databaseFirebase = FirebaseDatabase.getInstance();
@@ -160,7 +149,6 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         storage.clearCachedItems();
         mMappedItems.clear();
         checkSendBillsRecyclerViewAdapter.notifyDataSetChanged();
-
     }
 
     public void doSendData() {
@@ -183,10 +171,9 @@ public class CheckSendBillsActivity extends AppCompatActivity {
 //        mAllBillsViewModel = ViewModelProviders.of(this).get(AllBillsViewModel.class);
 
 
-        sharedPreferences = getSharedPreferences("saved_password",Context.MODE_PRIVATE);
-        String SalesmenId = sharedPreferences.getString("user_id","not Found");
 
-        userData.put("id",SalesmenId);
+
+
 
 
         ShopsStorageClass storage = new ShopsStorageClass(CheckSendBillsActivity.this);
@@ -198,7 +185,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
            shopsData= new HashMap<>();
 
             for(int i=0;i<s.size();i++){
-                shopsData.put("shops"+i,s.get(i));
+                shopsData.put("shops_"+s.get(i).getmShopId(),s.get(i));
             }
 
         }
@@ -211,21 +198,21 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         mappedData= new HashMap<>();
 
         for(int i=0;i<mMappedItems.size();i++){
-            mappedData.put("mapping",mMappedItems.get(i));
+            mappedData.put("mapping_"+mMappedItems.get(i).getmShopId(),mMappedItems.get(i));
         }
 
-
+        salesmenId.put("salesmen",sharedPreferences.getString("user_id","none"));
 
         l.add(shopsData);
         l.add(billsData);
         l.add(mappedData);
-        l.add(userData);
+        l.add(salesmenId);
 
        new CheckSendBillsActivity.UploadData().execute(l);
 
 
 
-        final DatabaseReference billsRef = databaseFirebase.getReference("data/salesmen_"+l.get(3)+"/bills/123");
+        final DatabaseReference billsRef = databaseFirebase.getReference("data/salesmen_"+l.get(3).get("salesmen")+"/bills");
 
         mAllBillsViewModel.getAllBills().observe(this, new Observer<List<AllBillsItem>>() {
             @Override
@@ -234,23 +221,16 @@ public class CheckSendBillsActivity extends AppCompatActivity {
                 Map<String,AllBillsItem> data= new HashMap<>();
 
                 for(int i=0;i<allBillsItems.size();i++){
-                    data.put("Bill_"+i,allBillsItems.get(i));
+                    data.put("Bill_"+i+allBillsItems.get(i).mShopId,allBillsItems.get(i));
                 }
 
-                billsRef.setValue(data);
-
-
+                billsRef.push().setValue(data);
             }
         });
 
-
         checkSendBillsRecyclerViewAdapter.notifyDataSetChanged();
-       // mAllBillsViewModel.deleteAllBills();
-
-        deleteMappedItems();
-
+        //deleteMappedItems();
     }
-
 
     public void doConfirmSendData(){
 
@@ -272,29 +252,34 @@ public class CheckSendBillsActivity extends AppCompatActivity {
     }
 
 
-
-    private static class UploadData extends AsyncTask<List<Map>,Void,Void> {
+    private static class UploadData extends AsyncTask<List<Map>,String,String> {
 
 
 
         @Override
-        protected Void doInBackground(List<Map>... lists) {
+        protected String doInBackground(List<Map>... lists) {
             FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
             DatabaseReference dataReference = firebaseDatabase.getReference("data");
 
-            DatabaseReference  salesmenRef = dataReference.child("salesmen_"+lists[0].get(3));
-
+            DatabaseReference  salesmenRef = dataReference.child("salesmen_"+lists[0].get(3).get("salesmen"));
+            
             salesmenRef.child("shops").setValue(lists[0].get(0));
 //            salesmenRef.child("bills").setValue(lists[0].get(1));
             salesmenRef.child("mapping").setValue(lists[0].get(2));
 
-            return null;
+            return lists[0].get(3).get("salesmen").toString();
         }
 
 
+        @Override
+        protected void onPostExecute(String aVoid) {
+            super.onPostExecute(aVoid);
+            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+            DatabaseReference dataReference = firebaseDatabase.getReference("admin");
+            DatabaseReference  notificationRef = dataReference.child("notification");
+            notificationRef.push().setValue("New bills received by "+aVoid);
+        }
     }
-
-
 
 }
 

@@ -13,9 +13,10 @@ public class ShopDetailsModel {
     private String mGroup;
 
     private int mRating;
+    private Long mShopId;
 
 
-    public ShopDetailsModel(String ShopName , String AliasName , String Address , String Area , String Location , String Sublocation , String Landmark , String Contactno ,String Group , int Rating ){
+    public ShopDetailsModel(String ShopName , String AliasName , String Address , String Area , String Location , String Sublocation , String Landmark , String Contactno ,String Group , int Rating ,Long ShopId){
 
         mShopName = ShopName ;
         mAliasName =  AliasName;
@@ -27,7 +28,11 @@ public class ShopDetailsModel {
         mContactno = Contactno ;
         mGroup =  Group;
         mRating = Rating;
+        mShopId = ShopId;
+    }
 
+    public Long getmShopId() {
+        return mShopId;
     }
 
     public String getmShopName() {

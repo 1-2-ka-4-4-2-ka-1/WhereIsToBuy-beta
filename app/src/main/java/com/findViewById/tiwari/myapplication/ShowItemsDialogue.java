@@ -56,6 +56,7 @@ public class ShowItemsDialogue extends AppCompatDialogFragment {
         mShowItemsAdapter =new ShowItemsRecyclelerViewAdapter(shop_items);
         mShowItemsRecyclerView.setLayoutManager(mhowItemsLayoutManager);
         mShowItemsRecyclerView.setAdapter(mShowItemsAdapter);
+
         mShowItemsAdapter.setOnShopItemClickListener(new ShowItemsRecyclelerViewAdapter.OnShopItemClickListener() {
             @Override
             public void onShopItemClicked(int Position) {

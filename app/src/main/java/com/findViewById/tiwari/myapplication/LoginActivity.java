@@ -41,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String USER_ID = "user_id";
     public static final String USER_PASS = "user_pass";
     public static final String LOGGED_IN = "logged_in";
+    public static final String USER_UNIQUE_IN = "user_unique_id";
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor login_sfeditor;
 
@@ -130,6 +132,7 @@ public class LoginActivity extends AppCompatActivity {
                             login_sfeditor.putBoolean(LOGGED_IN, true);
                             login_sfeditor.putString(USER_ID, id);
                             login_sfeditor.putString(USER_PASS, pass);
+                            login_sfeditor.putString(USER_UNIQUE_IN,String.valueOf(System.currentTimeMillis()));
                             login_sfeditor.apply();
                             login_sfeditor.commit();
 

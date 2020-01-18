@@ -32,6 +32,8 @@ public class ShowItemsRecyclelerViewAdapter extends RecyclerView.Adapter<ShowIte
 
 
     public static class itemsViewHolder extends RecyclerView.ViewHolder{
+
+
       public TextView mItemTextView;
 
 

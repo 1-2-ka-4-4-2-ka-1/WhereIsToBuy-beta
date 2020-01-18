@@ -37,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +97,10 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                 pickDate();
             }
         });
+
+        Date d = new Date();
+        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yy");
+        mDate.setText(f.format(d.getDate()));
 
 
         mAddNewItem.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
                 Intent intent = new Intent(MainActivity.this, EditBillActivity.class);
 
+                intent.putExtra(EditBillActivity.EXTRA_ID_LABLE,BillItem.getMitem_id_label());
                 intent.putExtra(EditBillActivity.EXTRA_ID,BillItem.getBill_id());
                 intent.putExtra(EditBillActivity.EXTRA_DESC,BillItem.getMitem_desc());
                 intent.putExtra(EditBillActivity.EXTRA_UNIT,BillItem.getMitem_unit());
@@ -217,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
     public void doSaveBill(){
 
-        timeInMills = System.currentTimeMillis()%1000;
+        timeInMills = System.currentTimeMillis()%10000;
 
         if(shopId == 0) {
             Toast.makeText(MainActivity.this,"Shop details Wrong",Toast.LENGTH_LONG).show();
@@ -242,8 +248,8 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
             for (int i = 0; i < billItems.size(); i++) {
 
-                billItems.get(i).setMitem_id_label(Long.toString(timeInMills));
-                mAllBillsViewModel.insert( new AllBillsItem((billItems.get(i).getMitem_id_label()),billItems.get(i).getMitem_desc(),billItems.get(i).getMitem_unit(),billItems.get(i).getMitem_rate(),billItems.get(i).getMitem_qty(),billItems.get(i).getMitem_amount()));
+                billItems.get(i).setBill_id(timeInMills);
+                mAllBillsViewModel.insert( new AllBillsItem((billItems.get(i).getBill_id()).toString(),billItems.get(i).getMitem_desc(),billItems.get(i).getMitem_unit(),billItems.get(i).getMitem_rate(),billItems.get(i).getMitem_qty(),billItems.get(i).getMitem_amount(),shopId,  mDate.getText().toString() , billItems.size()));
             }
 
 
@@ -291,20 +297,21 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         if(requestCode == EDIT_NOTE_REQUEST && resultCode == RESULT_OK){
 
 
-            int id = data.getIntExtra(EditBillActivity.EXTRA_ID,-1);
+            Long id = data.getLongExtra(EditBillActivity.EXTRA_ID,-1);
 
             if(id == -1){
                 Toast.makeText(getApplicationContext(),"Can't be updated",Toast.LENGTH_LONG).show();
                 return;
             }
 
+            String item_id_label = data.getStringExtra(EditBillActivity.EXTRA_ID_LABLE);
             String item_desc = data.getStringExtra(EditBillActivity.EXTRA_DESC);
             String item_unit = data.getStringExtra(EditBillActivity.EXTRA_UNIT);
             double item_rate = data.getDoubleExtra(EditBillActivity.EXTRA_RATE,0);
             double item_qty = data.getDoubleExtra(EditBillActivity.EXTRA_QTY,0);
             double item_amount = data.getDoubleExtra(EditBillActivity.EXTRA_AMOUNT,0);
 
-            BillItem billItem = new BillItem(Integer.toString(id),item_desc,item_unit,item_rate,item_qty,item_amount);
+            BillItem billItem = new BillItem(item_id_label,item_desc,item_unit,item_rate,item_qty,item_amount);
             billItem.setBill_id(id);
             mBillItemMidel.update(billItem);
 
@@ -330,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         shopSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+                if(!hasFocus){
                     if(mAddNewShop.getVisibility() == View.VISIBLE)
                     {
                         mAddNewShop.setVisibility(View.GONE);
@@ -365,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                shopId = Long.parseLong(storage.getShopByDesc(shopSearchView.getText().toString().trim()).getmContactno())%1000;
+                shopId = storage.getShopByDesc(shopSearchView.getText().toString().trim()).getmShopId();
 
 
             }
@@ -476,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                         itemRate= dataSnapshot.child(Integer.toString(itemCount)).child("rate").getValue().toString();
                         itemUnit=  dataSnapshot.child(Integer.toString(itemCount)).child("unit").getValue().toString();
 
-                        timeInMills = System.currentTimeMillis()%1000;
+                        timeInMills = System.currentTimeMillis()%10000;
 
                         shop_itemArrayList.add(new ShopItemModel(Long.toString(timeInMills),itemDesc,itemUnit,Double.parseDouble(itemRate),1,Double.parseDouble(itemRate)));
                         Log.i("Data:...........",dataSnapshot.child(Integer.toString(itemCount)).getValue().getClass().getName());

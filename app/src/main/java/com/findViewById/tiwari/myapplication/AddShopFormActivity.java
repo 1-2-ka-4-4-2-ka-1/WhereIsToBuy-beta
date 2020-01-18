@@ -45,9 +45,9 @@ public class AddShopFormActivity extends AppCompatActivity {
          mGroup = findViewById(R.id.ed_group);
 
          mRating = findViewById(R.id.sb_rating);
+         mRating.setStepSize(1.0f);
 
          mSubmitButton = findViewById(R.id.fb_submit_add_shop);
-
 
          mSubmitButton.setOnClickListener(new View.OnClickListener() {
              @Override
@@ -55,6 +55,14 @@ public class AddShopFormActivity extends AppCompatActivity {
                  doAddShop();
              }
          });
+
+        mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+               //Toast.makeText(AddShopFormActivity.this,(int)rating+"",Toast.LENGTH_LONG).show();
+                Rating = (int) rating;
+            }
+        });
 
     }
 
@@ -68,19 +76,14 @@ public class AddShopFormActivity extends AppCompatActivity {
          String Sublocation =  mSublocation.getText().toString().trim();
          String Landmark =  mLandmark.getText().toString().trim();
          String Contactno = mContactno.getText().toString().trim() ;
-         String Group =  mGroup.getText().toString().trim();;
+         String Group =  mGroup.getText().toString().trim();
 
 
-         mRating.setStepSize(1.0f);
-         mRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-             @Override
-             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                 Rating = (int)(rating);
-             }
-         });
 
 
-        ShopDetailsModel s = new ShopDetailsModel( ShopName ,  AliasName ,  Address ,  Area ,  Location ,  Sublocation ,  Landmark ,  Contactno , Group ,  Rating );
+
+        Long timeInMills = System.currentTimeMillis();
+        ShopDetailsModel s = new ShopDetailsModel( ShopName ,  AliasName ,  Address ,  Area ,  Location ,  Sublocation ,  Landmark ,  Contactno , Group ,  Rating ,timeInMills);
 
         ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
         storage.addNewShop(s);
@@ -89,13 +92,12 @@ public class AddShopFormActivity extends AppCompatActivity {
 
         Intent data = new Intent();
 
+
         data.putExtra(EXTRA_SHOPNAME, ShopName);
-        data.putExtra(EXTRA_ID, Contactno);
+        data.putExtra(EXTRA_ID, timeInMills.toString());
 
         setResult(RESULT_OK, data);
         finish();
-
-
     }
 
 

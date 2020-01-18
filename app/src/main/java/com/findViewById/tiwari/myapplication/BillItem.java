@@ -9,7 +9,7 @@ public class BillItem {
 
 
     @PrimaryKey(autoGenerate = true)
-    private int bill_id;
+    private Long bill_id;
 
     private String mitem_id_label;
     private String mitem_desc;
@@ -32,7 +32,7 @@ public class BillItem {
 
 
 
-    public int getBill_id() {
+    public Long getBill_id() {
         return bill_id;
     }
 
@@ -67,7 +67,7 @@ public class BillItem {
 
 
 
-    public void setBill_id(int bill_id) {
+    public void setBill_id(Long bill_id) {
         this.bill_id = bill_id;
     }
 }

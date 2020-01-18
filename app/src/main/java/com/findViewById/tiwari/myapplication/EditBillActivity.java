@@ -23,7 +23,7 @@ public class EditBillActivity extends AppCompatActivity {
 
     private FloatingActionButton msave_edit;
 
-
+    public static final String EXTRA_ID_LABLE = "com.findViewById.tiwari.myapplication.EXTRA_ID_LABLE";
     public static final String EXTRA_ID = "com.findViewById.tiwari.myapplication.EXTRA_ID";
     public static final String EXTRA_RATE = "com.findViewById.tiwari.myapplication.EXTRA_RATE";
     public static final String EXTRA_DESC = "com.findViewById.tiwari.myapplication.EXTRA_DESC";
@@ -52,7 +52,7 @@ public class EditBillActivity extends AppCompatActivity {
         if (intent.hasExtra(EXTRA_ID)) {
             setTitle("Edit Note");
 
-            mitem_id_label.setText(String.valueOf(intent.getIntExtra(EXTRA_ID, -1)));
+            mitem_id_label.setText(String.valueOf(intent.getIntExtra(EXTRA_ID_LABLE, -1)));
             mitem_rate.setText(Double.toString(intent.getDoubleExtra(EXTRA_RATE, 0)));
             mitem_desc.setText(intent.getStringExtra(EXTRA_DESC));
             mitem_amount.setText(Double.toString(intent.getDoubleExtra(EXTRA_AMOUNT, 0)));
@@ -127,7 +127,7 @@ public class EditBillActivity extends AppCompatActivity {
         data.putExtra(EXTRA_AMOUNT, item_amount);
 
 
-        int id = getIntent().getIntExtra(EXTRA_ID, 1);
+        Long id = getIntent().getLongExtra(EXTRA_ID, 1);
         if (id != -1) {
             data.putExtra(EXTRA_ID, id);
         }

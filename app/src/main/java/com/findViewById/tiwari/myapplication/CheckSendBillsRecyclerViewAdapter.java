@@ -33,7 +33,7 @@ public class CheckSendBillsRecyclerViewAdapter extends RecyclerView.Adapter<Chec
     public static class  ItemContainerRecyclerViewHolder extends RecyclerView.ViewHolder{
 
 
-        public TextView mitem_id_label;
+        public TextView mshop_id;
         public TextView mitem_name;
         public TextView  mitem_date;
         public TextView  mitem_count;
@@ -42,7 +42,7 @@ public class CheckSendBillsRecyclerViewAdapter extends RecyclerView.Adapter<Chec
 
         public ItemContainerRecyclerViewHolder(@NonNull View itemView, final onItemClickListener listener) {
             super(itemView);
-            mitem_id_label= itemView.findViewById(R.id.tv_check_bill_id);
+            mshop_id= itemView.findViewById(R.id.tv_check_bill_id);
             mitem_name = itemView.findViewById(R.id.tv_check_name);
             mitem_date = itemView.findViewById(R.id.tv_check_date);
             mitem_count = itemView.findViewById(R.id.tv_check_bills_count);
@@ -90,7 +90,7 @@ public class CheckSendBillsRecyclerViewAdapter extends RecyclerView.Adapter<Chec
 
         MapppedShopsBillsModel current_bill_item= mMappedBillsList.get(i);
 
-        itemContainerRecyclerViewHolder.mitem_id_label.setText(Long.toString(current_bill_item.getmShopId()));
+        itemContainerRecyclerViewHolder.mshop_id.setText(Long.toString(current_bill_item.getmShopId()%10000));
         itemContainerRecyclerViewHolder.mitem_name.setText(current_bill_item.getmName());
         itemContainerRecyclerViewHolder.mitem_date.setText(current_bill_item.getmDate());
         itemContainerRecyclerViewHolder.mitem_count.setText(Integer.toString(current_bill_item.getmCount()));

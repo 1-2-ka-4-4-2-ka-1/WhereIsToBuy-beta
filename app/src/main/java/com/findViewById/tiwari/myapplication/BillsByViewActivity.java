@@ -91,7 +91,7 @@ public class BillsByViewActivity extends AppCompatActivity {
             double item_qty = data.getDoubleExtra(EditBillActivity.EXTRA_QTY,0);
             double item_amount = data.getDoubleExtra(EditBillActivity.EXTRA_AMOUNT,0);
 
-            AllBillsItem AllBilsItem = new AllBillsItem((id),item_desc,item_unit,item_rate,item_qty,item_amount);
+            AllBillsItem AllBilsItem = new AllBillsItem((id),item_desc,item_unit,item_rate,item_qty,item_amount,0L,"",0);
             mAllBillsViewModel.update(AllBilsItem);
 
             Toast.makeText(getApplicationContext(),"Updated",Toast.LENGTH_LONG).show();
