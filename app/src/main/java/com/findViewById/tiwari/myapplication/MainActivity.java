@@ -54,20 +54,13 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     private AutoCompleteTextView shopSearchView;
 
     private BillViewModel mBillItemMidel;
-
     private AllBillsViewModel mAllBillsViewModel;
 
     public static final int EDIT_NOTE_REQUEST = 2;
     public static final int ADD_SHOP_REQUEST = 1;
 
-
-
     public static long timeInMills;
-
     public static long shopId;
-
-
-
 
     FirebaseDatabase database;
     DatabaseReference shopItemsRef;
@@ -275,7 +268,6 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
 
      public  void addToAllBillsDatabase(){
-
 
 
     }

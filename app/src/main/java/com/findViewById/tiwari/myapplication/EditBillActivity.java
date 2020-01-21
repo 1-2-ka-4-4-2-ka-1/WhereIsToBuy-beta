@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+
 public class EditBillActivity extends AppCompatActivity {
 
     public TextView mitem_id_label;
@@ -83,7 +85,7 @@ public class EditBillActivity extends AppCompatActivity {
     public void doSaveBill() {
 
 
-        //String item_id_label = mitem_id_label.getText().toString();
+        String item_id_label = mitem_id_label.getText().toString();
 
 
         String item_desc = mitem_desc.getText().toString();
@@ -103,7 +105,8 @@ public class EditBillActivity extends AppCompatActivity {
 
         double item_rate = Double.parseDouble(mitem_rate.getText().toString());
         double item_qty = Double.parseDouble(mitem_qty.getText().toString());
-        double item_amount = Double.parseDouble(mitem_amount.getText().toString());
+        DecimalFormat df = new DecimalFormat(".##");
+        double item_amount = Double.parseDouble(df.format(item_qty * item_rate));
 
         try {
 
@@ -119,7 +122,7 @@ public class EditBillActivity extends AppCompatActivity {
         }
 
         Intent data = new Intent();
-        //data.putExtra(EXTRA_ID, item_id_label);
+        data.putExtra(EXTRA_ID, item_id_label);
         data.putExtra(EXTRA_DESC, item_desc);
         data.putExtra(EXTRA_UNIT, item_unit);
         data.putExtra(EXTRA_RATE, item_rate);

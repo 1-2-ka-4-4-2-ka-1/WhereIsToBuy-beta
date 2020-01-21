@@ -1,5 +1,6 @@
 package com.findViewById.tiwari.myapplication;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class NotificationsActivity extends AppCompatActivity {
    private DatabaseReference  notificationRef;
 
    public  ArrayList<String> keys;
-
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -49,8 +50,34 @@ public class NotificationsActivity extends AppCompatActivity {
         mNotificationsRecyclerView.setAdapter(mAdapter);
         mNotificationsRecyclerView.setLayoutManager(mLayoutManager);
         firebaseDatabase = FirebaseDatabase.getInstance();
-        dataReference = firebaseDatabase.getReference("admin");
-        notificationRef = dataReference.child("notification").getRef();
+
+        sharedPreferences = getSharedPreferences("saved_password",MODE_PRIVATE);
+        String userId= sharedPreferences.getString("user_id","none");
+
+        dataReference = firebaseDatabase.getReference("data");
+        notificationRef = dataReference.child("salesmen_"+userId).child("notifications").getRef();
+
+        notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot d1 : dataSnapshot.getChildren()){
+                    mNotificationsLisr.add(new NotificationModel(d1.getValue().toString()));
+                    keys.add(d1.getKey());
+                }
+
+                mAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+
+
+
 
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -69,23 +96,7 @@ public class NotificationsActivity extends AppCompatActivity {
         }).attachToRecyclerView(mNotificationsRecyclerView);
 
 
-          notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               for(DataSnapshot d1 : dataSnapshot.getChildren()){
-                   mNotificationsLisr.add(new NotificationModel(d1.getValue().toString()));
-                   keys.add(d1.getKey());
-               }
 
-               mAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-        });
 
     }
 

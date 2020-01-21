@@ -1,6 +1,7 @@
 package com.findViewById.tiwari.myapplication;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.LightingColorFilter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -24,7 +25,7 @@ public class DashBoardActivity extends AppCompatActivity {
     private ImageView mCreateNewBill;
     private ImageView mSendAllBils;
     private ImageView mNotification;
-
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -61,15 +62,50 @@ public class DashBoardActivity extends AppCompatActivity {
 
 
 
+//        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+//        DatabaseReference dataReference = firebaseDatabase.getReference("admin");
+//        DatabaseReference  notificationRef = dataReference.child("notification").getRef();
+//        final List<String> mNotificationsList = new ArrayList<>();
+//        notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                 if(dataSnapshot.getChildrenCount()>0){
+//                    mNotification.setImageResource(R.drawable.ic_notifications_active);
+//                }else {
+//                    mNotification.setImageResource(R.drawable.ic_notifications_inactive);
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//
+//        });
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+
+
+        sharedPreferences = getSharedPreferences("saved_password",MODE_PRIVATE);
+        String userId= sharedPreferences.getString("user_id","none");
+
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference dataReference = firebaseDatabase.getReference("admin");
-        DatabaseReference  notificationRef = dataReference.child("notification").getRef();
-        final List<String> mNotificationsList = new ArrayList<>();
+        DatabaseReference dataReference = firebaseDatabase.getReference("data");
+        DatabaseReference  notificationRef = dataReference.child("salesmen_"+userId).child("notifications").getRef();
         notificationRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getChildrenCount()>0){
                     mNotification.setImageResource(R.drawable.ic_notifications_active);
+                }else {
+                    mNotification.setImageResource(R.drawable.ic_notifications_inactive);
                 }
 
             }
@@ -80,28 +116,7 @@ public class DashBoardActivity extends AppCompatActivity {
             }
 
         });
-
-
-
     }
-
-
-    public static  class task extends AsyncTask<Void ,Void , List<String>>{
-        @Override
-        protected List<String> doInBackground(Void... voids) {
-
-
-              return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<String> strings) {
-            super.onPostExecute(strings);
-
-        }
-
-    }
-
 
 
     public  void doCreateNewBill(){
@@ -116,5 +131,9 @@ public class DashBoardActivity extends AppCompatActivity {
     }
 
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SplashScreenActivity.activity_splash.finish();
+    }
 }

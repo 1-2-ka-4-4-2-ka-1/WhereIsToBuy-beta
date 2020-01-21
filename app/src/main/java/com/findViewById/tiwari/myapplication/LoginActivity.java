@@ -218,5 +218,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        SplashScreenActivity.activity_splash.finish();
+    }
+
 
 }
