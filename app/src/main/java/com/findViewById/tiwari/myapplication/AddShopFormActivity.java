@@ -79,25 +79,30 @@ public class AddShopFormActivity extends AppCompatActivity {
          String Group =  mGroup.getText().toString().trim();
 
 
+         if(ShopName.equals("") || Address.equals("")  || Contactno.equals("") || Rating == 0 || Group.equals("") ){
+
+             Toast.makeText(getApplicationContext(),"Shop name + contact no + Address + Rating + Group",Toast.LENGTH_LONG).show();
+         }
+        else {
 
 
+             Long timeInMills = System.currentTimeMillis();
+             ShopDetailsModel s = new ShopDetailsModel(ShopName, AliasName, Address, Area, Location, Sublocation, Landmark, Contactno, Group, Rating, timeInMills);
 
-        Long timeInMills = System.currentTimeMillis();
-        ShopDetailsModel s = new ShopDetailsModel( ShopName ,  AliasName ,  Address ,  Area ,  Location ,  Sublocation ,  Landmark ,  Contactno , Group ,  Rating ,timeInMills);
+             ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
+             storage.addNewShop(s);
 
-        ShopsStorageClass storage = new ShopsStorageClass(MainActivity.activity_main);
-        storage.addNewShop(s);
+             Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
 
-        Toast.makeText(getApplicationContext(),"Saved",Toast.LENGTH_LONG).show();
-
-        Intent data = new Intent();
+             Intent data = new Intent();
 
 
-        data.putExtra(EXTRA_SHOPNAME, ShopName);
-        data.putExtra(EXTRA_ID, timeInMills.toString());
+             data.putExtra(EXTRA_SHOPNAME, ShopName);
+             data.putExtra(EXTRA_ID, timeInMills.toString());
 
-        setResult(RESULT_OK, data);
-        finish();
+             setResult(RESULT_OK, data);
+             finish();
+         }
     }
 
 

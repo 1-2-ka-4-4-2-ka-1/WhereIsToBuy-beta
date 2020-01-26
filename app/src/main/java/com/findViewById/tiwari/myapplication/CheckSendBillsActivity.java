@@ -46,7 +46,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
 
 
-
+    public static AllBillsViewModel mAllBillsVieWModel;
     FirebaseDatabase databaseFirebase;
 
 
@@ -80,7 +80,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("saved_password",MODE_PRIVATE);
 
-
+        mAllBillsVieWModel = ViewModelProviders.of(this).get(AllBillsViewModel.class);
         databaseFirebase = FirebaseDatabase.getInstance();
 
 
@@ -276,6 +276,8 @@ public class CheckSendBillsActivity extends AppCompatActivity {
             DatabaseReference dataReference = firebaseDatabase.getReference("admin");
             DatabaseReference  notificationRef = dataReference.child("notification");
             notificationRef.push().setValue("New bills received by "+aVoid);
+            mAllBillsVieWModel.deleteAllBills();
+
         }
     }
 

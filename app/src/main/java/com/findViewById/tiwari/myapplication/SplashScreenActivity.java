@@ -84,7 +84,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);
                 ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashScreenActivity.this, splash_logo,"logoTransition");
                 startActivity(intent, options.toBundle());
-               // SplashScreenActivity.this.finish();
+
             }
             else {
                 Intent intent = new Intent(SplashScreenActivity.this, DashBoardActivity.class);
@@ -124,7 +124,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 public void onAnimationEnd(Drawable drawable) {
                     avd2.stop();
                     new MyAsyncTask().execute();
-                    Log.i("msg","1");
+
                 }
             });
         }
@@ -137,10 +137,12 @@ public class SplashScreenActivity extends AppCompatActivity {
                     public void onAnimationEnd(Drawable drawable) {
                         avd1.stop();
                         new MyAsyncTask().execute();
-                        Log.i("msg","2");
+
                     }
                 });
             }
+        }else {
+            new MyAsyncTask().execute();
         }
     }
 

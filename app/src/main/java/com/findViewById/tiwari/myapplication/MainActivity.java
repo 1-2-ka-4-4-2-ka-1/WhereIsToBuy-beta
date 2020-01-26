@@ -6,9 +6,15 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
+import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -34,11 +40,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements FilterListenerInterface ,  DatePickerDialog.OnDateSetListener{
@@ -75,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         activity_main = this;
 
+        database = FirebaseDatabase.getInstance();
 
 
         mShopSearchView = findViewById(R.id.sv_shop_search);
@@ -84,17 +97,15 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         mAddNewItem = findViewById(R.id.fb_add_new_item);
 
 
+        String date = new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(new Date());
+        mDate.setText(date);
+        Log.i("date",date);
         mDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickDate();
             }
         });
-
-        Date d = new Date();
-        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yy");
-        mDate.setText(f.format(d.getDate()));
-
 
         mAddNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                        shoItemsDialogue();
                    }
                 }else{
-                   Toast.makeText(MainActivity.this, " No Items Available  ", Toast.LENGTH_SHORT).show();
+                     Toast.makeText(MainActivity.this, " No Items Available  ", Toast.LENGTH_SHORT).show();
                      LodeItemsDataAsyncTask lodeItemsDataAsyncTask=new LodeItemsDataAsyncTask();
                      lodeItemsDataAsyncTask.execute();
                 }
@@ -169,7 +180,10 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
                 mBillItemMidel.delete(billItemsAdapter.getBillItemAt(viewHolder.getAdapterPosition()));
+               // billItemsAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+
                 Toast.makeText(getApplicationContext(),"deleted",Toast.LENGTH_LONG).show();
             }
         }).attachToRecyclerView(recyclerView);
@@ -196,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     }
 
     public void doConfirmSaveBill(){
-
+        proceedToBillPreview();
         new AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm Save")
@@ -205,12 +219,44 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        doSaveBill();
+                        doCheckUserExists();
                     }
 
                 })
                 .setNegativeButton("No", null)
                 .show();
+
+    }
+
+
+    public void doCheckUserExists(){
+
+        SharedPreferences sf = getSharedPreferences("saved_password",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sf.edit();
+       final String id=sf.getString("user_id","null");
+
+       DatabaseReference usersRef = database.getReference("users");
+       usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               if(dataSnapshot.child(id).exists()){
+                   doSaveBill();
+               }
+               else {
+                   Toast.makeText(getApplicationContext(),"You are no longer a user",Toast.LENGTH_SHORT).show();
+                   editor.putBoolean("logged_in", false);
+                   editor.apply();
+                   editor.commit();
+               }
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
+
+
 
     }
 
@@ -264,13 +310,184 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         }
 
+        proceedToBillPreview();
+
+    }
+
+
+    public void proceedToBillPreview() {
+// create a new document
+        PdfDocument document = new PdfDocument();
+
+        // crate a page description
+        PdfDocument.PageInfo pageInfo =
+                new PdfDocument.PageInfo.Builder(421, 595, 1).create();
+        // start a page
+        PdfDocument.Page page = document.startPage(pageInfo);
+
+        Canvas canvas = page.getCanvas();
+       // canvas.drawColor(Color.RED);
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+
+
+        canvas.drawText("Shop:", 100-50, 90-30, paint);
+
+
+        paint.setStrokeWidth(0.4f);
+        paint.setTextSize(10);
+        canvas.drawLine(100-50, 100-30, 450-50, 100-30, paint);
+        canvas.drawLine(100-50, 130-40, 450-50, 130-40, paint);
+        canvas.drawText("02/01/20", 490-130, 70-50, paint);
+
+        paint.setColor(Color.rgb(12, 108, 138));
+
+        paint.setTextSize(8);
+        paint.setTypeface(Typeface.SANS_SERIF);
+        canvas.drawText("Rough Estimate", 170, 15, paint);
+        paint.setTextSize(25);
+        canvas.drawText("REENA", 165, 35, paint);
+
+
+        paint.setStrokeWidth(1);
+        paint.setTextSize(10);
+        paint.setColor(Color.BLACK);
+
+        canvas.drawText("Qty", 90 + 3-50, 170-50, paint);
+        canvas.drawText("Unit", 120 + 10-50, 170-50, paint);
+        canvas.drawText("Desc of good", 155 + 40-50, 170-50, paint);
+        canvas.drawText("Rate", 335 + 5-50, 170-50, paint);
+        canvas.drawText("Amount", 400-50, 170-50, paint);
+
+
+        //canvas.drawLine(90,160,90,750,paint);
+//        canvas.drawLine(90-50, 190-50, 90-50, 595-80, paint);
+//        canvas.drawLine(120-50, 190-50, 120-50, 595-80, paint);
+//        canvas.drawLine(165-50, 190-50, 165-50, 595-80, paint);
+//        canvas.drawLine(325-50, 190-50, 325-50-10, 595-80, paint);
+//        canvas.drawLine(390-50-10, 190-50, 390-50-10, 595-80, paint);
+//        canvas.drawLine(460-50-10, 190-50, 460-50-10, 595-80, paint);
+
+
+        canvas.drawText("Note:", 80-50, 595-60, paint);
+        canvas.drawText("Total", 390-50, 595-50, paint);
+
+
+        paint.setTextSize(8);
+        int j = 25;
+
+        int total = 0;
+
+        String desc = "नींबू अचार  ";
+
+        int max = 17;
+        Paint p = new Paint();
+        p.setColor(Color.WHITE);
+
+        int o=25;
+        for (int i = 0; i < max; i++) {
+            if(i%2==0)
+            {
+                p.setColor(Color.parseColor("#f0fcfc"));
+            }else p.setColor(Color.parseColor("#e8e8e8"));
+
+            canvas.drawRect(30,170 + o-50,405,170 +o-50+25,p);
+
+
+
+           o+=22;
+
+
+            j = j + 10;
+            canvas.drawText(Integer.toString(i + 1), 90 + 10-50, 170 + j-50, paint);
+            canvas.drawText("Kg", 120 + 15-50, 170 + j-50,paint);
+            canvas.drawText("561.00", 325 + 5-50, 170 + j-50, paint);
+            canvas.drawText("561.00", 400-50, 170 + j-50, paint);
+            int m = 0;
+            int n = 0;
+            if (desc.length() - m < 25) {
+                n = desc.length();
+                // j+=10;
+            } else {
+                n = 25;
+                max = 15;
+            }
+            for (int k = 0; k <= desc.length() / 25; k++) {
+                canvas.drawText(desc.substring(m, n), 135 + 40-50, 170 + j-50, paint);
+                m = n;
+                if (desc.length() - m < 25) {
+                    n = desc.length();
+                } else {
+                    n = 25;
+                    j += 12;
+
+                }
+
+                j += 12;
+            }
+
+            total += 561;
+        }
+
+
+        canvas.drawLine(90-50, 190-50, 90-50, 595-80+5, paint);
+        canvas.drawLine(120-50, 190-50, 120-50, 595-80+5, paint);
+        canvas.drawLine(165-50, 190-50, 165-50, 595-80+5, paint);
+        canvas.drawLine(325-50-10, 190-50, 325-50-10, 595-80+5, paint);
+        canvas.drawLine(390-50-10, 190-50, 390-50-10, 595-80+5, paint);
+        canvas.drawLine(460-50-10, 190-50, 460-50-10, 595-80+5, paint);
+        //canvas.drawText("12312312312312312312312",135+40,190,paint);
+        //canvas.drawText("561.00",390,170+j,paint);
+
+        // finish the page
+        document.finishPage(page);
+
+
+        // Create Page 2
+//        pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 2).create();
+//        page = document.startPage(pageInfo);
+//        canvas = page.getCanvas();
+//        paint = new Paint();
+//        paint.setColor(Color.BLUE);
+//        canvas.drawCircle(200, 200, 100, paint);
+//        document.finishPage(page);
+
+        // write the document content
+        //String targetPdf = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fileName.pdf";
+        String targetPdf =this.getFilesDir() + "/fileName.pdf";
+        File filePath = new File(targetPdf);
+
+        try {
+            document.writeTo(new FileOutputStream(filePath));
+            Toast.makeText(this, "Done" + targetPdf, Toast.LENGTH_LONG).show();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Something wrong: " + e.toString(),
+                    Toast.LENGTH_LONG).show();
+        }
+
+        // close the document
+        document.close();
+
+
+        showPdf();
     }
 
 
-     public  void addToAllBillsDatabase(){
 
+    public void showPdf(){
+
+        Intent display = new Intent(MainActivity.this,PdfPreviewer.class);
+        startActivity(display);
 
     }
+
+
+
+
+
 
     public void shoItemsDialogue(){
         //arrayList

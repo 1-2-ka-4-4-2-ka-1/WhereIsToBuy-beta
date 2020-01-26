@@ -102,9 +102,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/bill_unit_container_recyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="542dp"
-        android:layout_marginBottom="2dp"
+        android:layout_width="411dp"
+        android:layout_height="561dp"
         android:clickable="true"
         android:descendantFocusability="afterDescendants"
         android:focusable="auto"
@@ -113,6 +112,7 @@
         android:paddingEnd="20dp"
         app:layout_constraintBottom_toTopOf="@+id/constraintLayout2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
