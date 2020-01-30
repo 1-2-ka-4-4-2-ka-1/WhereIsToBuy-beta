@@ -53,7 +53,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements FilterListenerInterface ,  DatePickerDialog.OnDateSetListener{
+public class MainActivity extends AppCompatActivity implements FilterListenerInterface ,  DatePickerDialog.OnDateSetListener ,AddNoteDialogue.DialogueListener{
 
     public static Activity activity_main;
 
@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     private Button mAddNewShop;
     FloatingActionButton mSaveBill;
     FloatingActionButton mAddNewItem;
+
+    public  ArrayList<BillItem> mBillItems;
 
     private AutoCompleteTextView shopSearchView;
 
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
     public static long timeInMills;
     public static long shopId;
+    public static String mNote = "";
 
     FirebaseDatabase database;
     DatabaseReference shopItemsRef;
@@ -210,24 +213,55 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
     }
 
     public void doConfirmSaveBill(){
-        proceedToBillPreview();
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Confirm Save")
-                .setMessage("Confirm save and clear list ?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        doCheckUserExists();
-                    }
+        //proceedToBillPreview();
 
-                })
-                .setNegativeButton("No", null)
-                .show();
+        if(mShopSearchView.getText().toString().trim().equals(""))
+        {
+            Toast.makeText(getApplicationContext(),"Please Select Shop",Toast.LENGTH_LONG).show();
+        }
+        else{
+           AlertDialog alertDialog= new AlertDialog.Builder(this).create();
+                    alertDialog.setIcon(android.R.drawable.ic_dialog_alert);
 
+            alertDialog.setTitle("Confirm Save");
+
+            alertDialog.setMessage("Confirm save and clear list ?");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            doCheckUserExists();
+                        }
+
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Add Note", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    doGetNote();
+                }
+            });
+            alertDialog.show();
+        }
     }
 
+
+
+    public void doGetNote(){
+        final AddNoteDialogue addNoteDialogue = new AddNoteDialogue("",0);
+        addNoteDialogue.show(getSupportFragmentManager(), "Add Note");
+    }
+
+
+    @Override
+    public void addNoteDialogue(String note) {
+
+        mNote = note;
+    }
 
     public void doCheckUserExists(){
 
@@ -262,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
     public void doSaveBill(){
 
-        timeInMills = System.currentTimeMillis()%10000;
+        timeInMills = System.currentTimeMillis()%1000000;
 
         if(shopId == 0) {
             Toast.makeText(MainActivity.this,"Shop details Wrong",Toast.LENGTH_LONG).show();
@@ -274,7 +308,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         if(mBillItemMidel.getAllBills().getValue() != null){
             if(mBillItemMidel.getAllBills().getValue().size() == 0)
             {
-                Toast.makeText(MainActivity.this,"Can Not Save Emty Bill",Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this,"Can Not Save Empty Bill",Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -291,10 +325,10 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
                 mAllBillsViewModel.insert( new AllBillsItem((billItems.get(i).getBill_id()).toString(),billItems.get(i).getMitem_desc(),billItems.get(i).getMitem_unit(),billItems.get(i).getMitem_rate(),billItems.get(i).getMitem_qty(),billItems.get(i).getMitem_amount(),shopId,  mDate.getText().toString() , billItems.size()));
             }
 
-
-
-            MapppedShopsBillsModel mapppedShopsBillsModels = new MapppedShopsBillsModel(shopId,Integer.parseInt(Long.toString(timeInMills).trim()), mDate.getText().toString(),billItems.size(),mShopSearchView.getText().toString());
-
+            SharedPreferences sf = getSharedPreferences("saved_password",MODE_PRIVATE);
+            String salesmen = sf.getString("user_id","null");
+            MapppedShopsBillsModel mapppedShopsBillsModels = new MapppedShopsBillsModel(shopId,Integer.parseInt(Long.toString(timeInMills).trim()), mDate.getText().toString(),billItems.size(),mShopSearchView.getText().toString(),salesmen,mNote);
+            mNote="";
             MappedShopsBillsStorageClass storage = new MappedShopsBillsStorageClass(MainActivity.activity_main);
             storage.insertMappedItems(mapppedShopsBillsModels);
             Toast.makeText(MainActivity.this,"Bill Saved",Toast.LENGTH_LONG).show();
@@ -310,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
 
         }
 
-        proceedToBillPreview();
+        //proceedToBillPreview();
 
     }
 
@@ -532,7 +566,6 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             mShopSearchView.setText(data.getStringExtra(AddShopFormActivity.EXTRA_SHOPNAME));
             shopId = Long.parseLong(data.getStringExtra(AddShopFormActivity.EXTRA_ID));
 
-
         }
         else
         {
@@ -582,8 +615,6 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 shopId = storage.getShopByDesc(shopSearchView.getText().toString().trim()).getmShopId();
-
-
             }
         });
 
@@ -628,6 +659,8 @@ public class MainActivity extends AppCompatActivity implements FilterListenerInt
         String currentDate = dateFormat.format(c.getTime());
         mDate.setText(currentDate);
     }
+
+
 
 
     public class  LodeItemsDataAsyncTask extends AsyncTask<Void , Void , Void>{

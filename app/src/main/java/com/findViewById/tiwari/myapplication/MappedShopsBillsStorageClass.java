@@ -57,6 +57,29 @@ public class MappedShopsBillsStorageClass {
         return gson.fromJson(json, type);
     }
 
+    public void deleteMappedItemByBillId(int billId){
+        List<MapppedShopsBillsModel> m = new ArrayList<>();
+        if(loadMappedItems()!=null){
+            m.addAll(loadMappedItems());
+
+        }
+
+
+        for(int i=0;i<m.size();i++)
+        {
+            if(m.get(i).getmBillId() == billId){
+                m.remove(i);
+                break;
+            }
+        }
+        clearCachedItems();
+        storeMappedItems(m);
+
+
+
+    }
+
+
     public void clearCachedItems() {
         preferences = context.getSharedPreferences(STORAGE, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();

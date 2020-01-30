@@ -59,7 +59,14 @@ public class AllBillsRipository{
     }
 
 
-    
+    public void  deleteAllBillsBy(String i){
+
+        //Log.i("=----=-==-=---=",i);
+        new DeleteAllBillsByAsynicTask(AllBillsDao).execute(i);
+
+
+    }
+
 
 
     private static class InsertBillAsynicTask extends AsyncTask<AllBillsItem,Void,Void>{
@@ -127,6 +134,19 @@ public class AllBillsRipository{
     }
 
 
+    private static class DeleteAllBillsByAsynicTask extends AsyncTask<String,Void,Void> {
 
+        private AllBillsDao AllBillsDao;
+
+        private DeleteAllBillsByAsynicTask(AllBillsDao AllBillsDao){
+            this.AllBillsDao = AllBillsDao;
+        }
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            AllBillsDao.deleteAllBillsByItems(strings[0]);
+            return null;
+        }
+    }
 
 }

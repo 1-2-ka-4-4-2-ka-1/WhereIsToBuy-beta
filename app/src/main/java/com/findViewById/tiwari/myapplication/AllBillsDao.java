@@ -32,4 +32,8 @@ public interface AllBillsDao {
     @Query("SELECT * FROM all_bills_table WHERE mitem_id_label =:s")
     LiveData<List<AllBillsItem>> getBillsBy(String s);
 
+    @Query("DELETE  FROM all_bills_table WHERE mitem_id_label =:s")
+    void deleteAllBillsByItems(String s);
+
+
 }

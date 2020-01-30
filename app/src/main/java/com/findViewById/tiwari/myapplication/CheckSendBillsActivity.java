@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -16,11 +17,15 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +62,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
     private  Map<String,MapppedShopsBillsModel> mappedData = new HashMap<>();
     private  Map<String,String> salesmenId = new HashMap<>();
 
-    
+    private  MappedShopsBillsStorageClass storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
 
         mSendData = findViewById(R.id.fb_check_send_data);
 
+        storage = new MappedShopsBillsStorageClass(CheckSendBillsActivity.this);
         getMappedItemsList();
 
 
@@ -108,7 +114,6 @@ public class CheckSendBillsActivity extends AppCompatActivity {
             }
         });
 
-
         mSendData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,12 +121,30 @@ public class CheckSendBillsActivity extends AppCompatActivity {
             }
         });
 
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder viewHolder1) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+
+
+                storage.deleteMappedItemByBillId(mMappedItems.get(viewHolder.getAdapterPosition()).getmBillId());
+                mAllBillsVieWModel.deleteAllBillsBy(String.valueOf(mMappedItems.get(viewHolder.getAdapterPosition()).getmBillId()));
+                mMappedItems.remove(viewHolder.getAdapterPosition());
+                checkSendBillsRecyclerViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                Toast.makeText(getApplicationContext(),"deleted",Toast.LENGTH_LONG).show();
+            }
+        }).attachToRecyclerView(recyclerView);
+
+
     }
 
 
     public void getMappedItemsList() {
-
-        MappedShopsBillsStorageClass storage = new MappedShopsBillsStorageClass(CheckSendBillsActivity.this);
 
 
         if (mMappedItems != null && storage.loadMappedItems() != null) {
@@ -196,7 +219,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         mappedData= new HashMap<>();
 
         for(int i=0;i<mMappedItems.size();i++){
-            mappedData.put("mapping_"+mMappedItems.get(i).getmShopId(),mMappedItems.get(i));
+            mappedData.put("mapping_"+mMappedItems.get(i).getmShopId()+"_"+mMappedItems.get(i).getmBillId(),mMappedItems.get(i));
         }
 
         salesmenId.put("salesmen",sharedPreferences.getString("user_id","none"));
@@ -230,6 +253,39 @@ public class CheckSendBillsActivity extends AppCompatActivity {
         deleteMappedItems();
     }
 
+
+    public void doCheckUserExists(){
+
+        SharedPreferences sf = getSharedPreferences("saved_password",MODE_PRIVATE);
+        final SharedPreferences.Editor editor = sf.edit();
+        final String id=sf.getString("user_id","null");
+
+        DatabaseReference usersRef = databaseFirebase.getReference("users");
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(id).exists()){
+                    doSendData();
+                }
+                else {
+                    Toast.makeText(getApplicationContext(),"You are no longer a user",Toast.LENGTH_SHORT).show();
+                    editor.putBoolean("logged_in", false);
+                    editor.apply();
+                    editor.commit();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+
     public void doConfirmSendData(){
 
         new AlertDialog.Builder(this)
@@ -240,7 +296,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
                 {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        doSendData();
+                        doCheckUserExists();
                     }
 
                 })
@@ -263,7 +319,7 @@ public class CheckSendBillsActivity extends AppCompatActivity {
             
             salesmenRef.child("shops").setValue(lists[0].get(0));
 //            salesmenRef.child("bills").setValue(lists[0].get(1));
-            salesmenRef.child("mapping").setValue(lists[0].get(2));
+            salesmenRef.child("mapping").push().setValue(lists[0].get(2));
 
             return lists[0].get(3).get("salesmen").toString();
         }

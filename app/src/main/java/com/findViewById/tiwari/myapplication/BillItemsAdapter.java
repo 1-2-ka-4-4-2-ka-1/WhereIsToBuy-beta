@@ -29,16 +29,14 @@ public class BillItemsAdapter extends ListAdapter<BillItem,BillItemsAdapter.Bill
         public boolean areContentsTheSame(@NonNull BillItem BillItem, @NonNull BillItem t1) {
 
             return BillItem.getMitem_desc().equals(t1.getMitem_desc())
-                     &&  BillItem.getBill_id()==t1.getBill_id()
+                     &&  BillItem.getBill_id().equals(t1.getBill_id())
                     &&  BillItem.getMitem_rate()==t1.getMitem_rate()
                     &&  BillItem.getMitem_unit().equals(t1.getMitem_unit())
                     && BillItem.getMitem_qty() == t1.getMitem_qty();
         }
     };
 
-    public BillItemsAdapter(@NonNull DiffUtil.ItemCallback<BillItem> diffCallback) {
-        super(diffCallback);
-    }
+
 
 
     @NonNull

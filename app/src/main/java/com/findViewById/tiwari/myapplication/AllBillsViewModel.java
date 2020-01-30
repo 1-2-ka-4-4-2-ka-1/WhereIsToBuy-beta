@@ -42,5 +42,8 @@ public class AllBillsViewModel extends AndroidViewModel {
     }
     
     public LiveData<List<AllBillsItem>> getBillsBy(String i){ return  ripository.getAllBillsBy(i);}
-    
+
+    public void deleteAllBillsBy(String i){
+        ripository.deleteAllBillsBy(i);
+    }
 }
