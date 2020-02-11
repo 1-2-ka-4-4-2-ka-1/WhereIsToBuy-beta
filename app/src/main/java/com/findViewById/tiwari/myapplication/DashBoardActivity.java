@@ -2,6 +2,7 @@ package com.findViewById.tiwari.myapplication;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.LightingColorFilter;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -32,6 +33,8 @@ public class DashBoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dash_board);
+        //Screen Orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mCreateNewBill = findViewById(R.id.iv_create_new_bill);
         mSendAllBils = findViewById(R.id.iv_send_all_bills);

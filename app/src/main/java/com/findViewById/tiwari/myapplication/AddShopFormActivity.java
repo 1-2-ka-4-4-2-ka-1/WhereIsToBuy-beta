@@ -1,6 +1,7 @@
 package com.findViewById.tiwari.myapplication;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -33,7 +34,8 @@ public class AddShopFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_shop_form);
-
+        //Screen Orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
          mShopName = findViewById(R.id.ed_shop_name);
          mAliasName = findViewById(R.id.ed_alias_name);
          mAddress = findViewById(R.id.ed_address);

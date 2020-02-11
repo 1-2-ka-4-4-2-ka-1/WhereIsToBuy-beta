@@ -1,6 +1,7 @@
 package com.findViewById.tiwari.myapplication;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.support.design.widget.FloatingActionButton;
@@ -39,6 +40,8 @@ public class EditBillActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_bill);
+        //Screen Orientation
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mitem_id_label = findViewById(R.id.tv_item_id);
         mitem_desc = findViewById(R.id.ed_description);
